@@ -5,14 +5,15 @@ const blockSchema = new Schema({
     timestamp: { type: String, default: Date.now },
     previousHash: { type: String },
     transactions: [{}],
+    chain: { type: Schema.Types.ObjectId, ref: 'Blockchain' },
     hash: { type: String, default: '' }
 })
 
 blockSchema.method({
     computeHash: function() {
         const { timestamp, previousHash, transactions } = this
-        this.hash = computeHash(timestamp, previousHash, transactions)
-        return this.hash
+        const hash = computeHash(timestamp, previousHash, transactions)
+        return 
     }
 })
 
