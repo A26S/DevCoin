@@ -26,11 +26,12 @@ establishConnectionToDB()
 const Block = require('./models/Block')
 const Blockchain = require('./models/Blockchain')
 
-// const bc = new Blockchain
+// const bc = new Blockchain()
 // console.log(bc)
 
-// const block = new Block()
+const block = new Block()
+block.mine()
 // console.log(Block.genesis())
 // block.computeHash()
 // console.log(block.computeHash())
-// console.log(block)
+console.log(block)
