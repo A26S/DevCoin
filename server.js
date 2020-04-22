@@ -24,9 +24,13 @@ const establishConnectionToDB = async () => {
 establishConnectionToDB()
 
 const Block = require('./models/Block')
+const Blockchain = require('./models/Blockchain')
 
-const block = new Block()
-console.log(Block.genesis())
-block.computeHash()
+// const bc = new Blockchain
+// console.log(bc)
+
+// const block = new Block()
+// console.log(Block.genesis())
+// block.computeHash()
 // console.log(block.computeHash())
-console.log(block)
+// console.log(block)

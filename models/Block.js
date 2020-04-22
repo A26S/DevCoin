@@ -13,7 +13,10 @@ blockSchema.method({
     computeHash: function() {
         const { timestamp, previousHash, transactions } = this
         const hash = computeHash(timestamp, previousHash, transactions)
-        return 
+        return hash
+    },
+    mine: async function() {
+        //
     }
 })
 
