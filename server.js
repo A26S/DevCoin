@@ -6,10 +6,12 @@ const mongoose = require('mongoose')
 const app = require('./app')
 const { DB_URL, DB_PASSWORD, PORT } = process.env
 const dB = DB_URL.replace('<password>', DB_PASSWORD)
+const port = PORT || 1234
 
 const connect = promisify(mongoose.connect)
+// const listen = promisify(app.listen(port))
 
-const establishConnectionToDB = async () => {
+const connectToDB = async () => {
     try {
         await connect(dB, {
             useNewUrlParser: true,
@@ -21,17 +23,29 @@ const establishConnectionToDB = async () => {
     }
 }
 
-establishConnectionToDB()
+const connectToServer = async () => {
+    try {
+        app.listen(port, () => console.log(`port ${port} connected`))
+    } catch (error) {
+        console.log(`cannot listen on port ${port}`)
+        console.log(error.message)
+    }
+}
 
-const Block = require('./models/Block')
-const Blockchain = require('./models/Blockchain')
+connectToDB()
+connectToServer()
+
+// app.listen(port)
+
+// const Block = require('./models/Block')
+// const Blockchain = require('./models/Blockchain')
 
 // const bc = new Blockchain()
 // console.log(bc)
 
-const block = new Block()
-block.mine()
+// const block = new Block()
+// block.mine()
 // console.log(Block.genesis())
 // block.computeHash()
 // console.log(block.computeHash())
-console.log(block)
+// console.log(block)
