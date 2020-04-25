@@ -2,10 +2,10 @@ const { Schema, model } = require('mongoose')
 const { computeHash } = require('../utils/computeHash')
 const Blockchain = require('./Blockchain')
 
-const getBlockchain = setTimeout(async () => {
-        const blockchain = await Blockchain.findOne()
-        return blockchain._id
-    }, 0)
+// const getBlockchain = setTimeout(async () => {
+//         const blockchain = await Blockchain.findOne()
+//         return blockchain._id
+//     }, 0)
 
 // const blockchain = setTimeout(() => getBlockchain(),0)
 
@@ -14,7 +14,7 @@ const blockSchema = new Schema({
     previousHash: { type: String },
     // transactions: [{}],
     data: { type: String },
-    chain: { type: Schema.Types.ObjectId, ref: 'Blockchain', default: getBlockchain },
+    chain: { type: Schema.Types.ObjectId, ref: 'Blockchain' },
     hash: { type: String, default: '' }
 })
 
@@ -39,10 +39,11 @@ blockSchema.method({
 })
 
 blockSchema.static({
-    genesis: async function() {
+    genesis: async function(chain) {
         const genesisBlock = new this({ 
             timestamp: '1587569720271',
             previousHash: '-',
+            chain,
             hash: '0000' 
         })
         await genesisBlock.save()

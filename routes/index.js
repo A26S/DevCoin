@@ -5,14 +5,11 @@ const Blockchain = require('../models/Blockchain')
 router.get('/blocks', async (req, res, next) => {
     let blockchain = await Blockchain.findOne()
     if (!blockchain) {
-        let blockchain = new Blockchain
+        blockchain = new Blockchain
         await blockchain.save()
-        // console.log(blockchain)
-        return 
     }
     if (!blockchain.chain.length) {
-        console.log(blockchain)
-        const genesisBlock = Block.genesis()
+        const genesisBlock = await Block.genesis(blockchain._id)
         blockchain.chain.push(genesisBlock)
         await blockchain.save()
     }
