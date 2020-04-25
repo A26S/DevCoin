@@ -40,13 +40,12 @@ blockSchema.method({
 
 blockSchema.static({
     genesis: async function(chain) {
-        const genesisBlock = new this({ 
+        const genesisBlock = await this.create({ 
             timestamp: '1587569720271',
             previousHash: '-',
             chain,
             hash: '0000' 
         })
-        await genesisBlock.save()
         return genesisBlock
     }
 })
