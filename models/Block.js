@@ -14,7 +14,7 @@ const blockSchema = new Schema({
     previousHash: { type: String },
     // transactions: [{}],
     data: { type: String },
-    chain: { type: Schema.Types.ObjectId, ref: 'Blockchain' },
+    chain: { type: Schema.Types.ObjectId, ref: 'Blockchain', default: '5ea47b69acd66cc296101ec1' },
     hash: { type: String, default: '' }
 })
 
@@ -27,11 +27,12 @@ blockSchema.method({
     mine: async function() {
         const { chain, computeHash } = this
         const blockchain = await Blockchain.findById(chain)
-        const latestBlock = blockchain.populate('chain').latestBlock()
-        // console.log(latestBlock)
-        // console.log(blockchain)
-        this.previousHash = latestBlock.hash
+        const latestBlock = blockchain.latestBlock()
+        const prevHash = await Block.findByIdAndReturnHash(latestBlock)
+        this.previousHash = prevHash
         this.hash = computeHash()
+        blockchain.chain.push(this)
+        await blockchain.save()
         await this.save()
         return
         // if it doesnt work, make mine a static function and `return new this`
@@ -47,6 +48,10 @@ blockSchema.static({
             hash: '0000' 
         })
         return genesisBlock
+    },
+    findByIdAndReturnHash: async function(id) {
+        const block = await this.findById(id)
+        return block.hash
     }
 })
 
