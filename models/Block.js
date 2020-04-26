@@ -2,12 +2,12 @@ const { Schema, model } = require('mongoose')
 const { computeHash } = require('../utils/computeHash')
 const Blockchain = require('./Blockchain')
 
-// const getBlockchain = setTimeout(async () => {
+// const getBlockchain = async () => {
 //         const blockchain = await Blockchain.findOne()
 //         return blockchain._id
-//     }, 0)
+//     }
 
-// const blockchain = setTimeout(() => getBlockchain(),0)
+// const blockchain = getBlockchain()
 
 const blockSchema = new Schema({
     timestamp: { type: String, default: Date.now },
@@ -25,12 +25,12 @@ blockSchema.method({
         return hash
     },
     mine: async function() {
-        const { chain, computeHash } = this
+        const { chain, computeHash, timestamp } = this
         const blockchain = await Blockchain.findById(chain)
         const latestBlock = blockchain.latestBlock()
         const prevHash = await Block.findByIdAndReturnHash(latestBlock)
         this.previousHash = prevHash
-        this.hash = computeHash()
+        this.hash = computeHash(timestamp)
         blockchain.chain.push(this)
         await blockchain.save()
         await this.save()
