@@ -49,3 +49,8 @@ connectToServer()
 // block.computeHash()
 // console.log(block.computeHash())
 // console.log(block)
+
+
+// const { computeHash } = require('./utils/computeHash')
+
+// console.log(computeHash('lol', 'ok', 'yes'))

@@ -1,5 +1,5 @@
 const { Schema, model } = require('mongoose')
-const { validateChain } = require('../utils/validateChain')
+const { validateChain } = require('../utils/chainHelpers')
 const Block = require('./Block')
 
 const blockchainSchema = new Schema({
@@ -29,6 +29,24 @@ blockchainSchema.method({
                 return validateChain(currentBlock, previousBlock)
             }
         })
+    }
+})
+
+blockchainSchema.static({
+    createOne: async function() {
+        let blockchain = await this.findOne()
+        if (!blockchain) {
+            blockchain = await this.create({})
+        }
+        if (!blockchain.chain.length) {
+            console.log(typeof Block)
+            console.log(typeof Blockchain)
+            const genesisBlock = await Block.genesis(blockchain._id)
+            blockchain.chain.push(genesisBlock)
+            await blockchain.save()
+        }
+        console.log(`BLOCKCHAINNN ${blockchain}`)
+        return blockchain
     }
 })
 

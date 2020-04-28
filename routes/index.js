@@ -1,17 +1,10 @@
 const router = require('express').Router()
 const Block = require('../models/Block')
 const Blockchain = require('../models/Blockchain')
+const { createChain } = require('../utils/chainHelpers')
 
-router.get('/blocks', async (req, res, next) => {
-    let blockchain = await Blockchain.findOne()
-    if (!blockchain) {
-        blockchain = await Blockchain.create({})
-    }
-    if (!blockchain.chain.length) {
-        const genesisBlock = await Block.genesis(blockchain._id)
-        blockchain.chain.push(genesisBlock)
-        await blockchain.save()
-    }
+router.get('/blocks', async (req, res, next) => {    
+    const blockchain = await Blockchain.createOne()
     return res.json({
         blockchain
     })
