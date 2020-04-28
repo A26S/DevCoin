@@ -2,12 +2,20 @@ const { Schema, model } = require('mongoose')
 const { computeHash } = require('../utils/computeHash')
 const Blockchain = require('./Blockchain')
 
-// const getBlockchain = async () => {
-//         const blockchain = await Blockchain.findOne()
-//         return blockchain._id
-//     }
+const getBlockchain = async () => {
+    const blockchain = await Blockchain.findOne()
+    return blockchain._id
+}
 
-// const blockchain = getBlockchain()
+const defaultBlockchain = () => {
+    let blockchainId
+    getBlockchain().then(id => {
+        console.log(id)
+        blockchainId = id
+    })
+    console.log(blockchainId)
+    return blockchainId
+}
 
 const blockSchema = new Schema({
     timestamp: { type: String, default: Date.now },
@@ -26,14 +34,16 @@ blockSchema.method({
     },
     mine: async function() {
         const { chain, computeHash, timestamp } = this
+        // console.log(computeHash)
         const blockchain = await Blockchain.findById(chain)
         const latestBlock = blockchain.latestBlock()
         const prevHash = await Block.findByIdAndReturnHash(latestBlock)
         this.previousHash = prevHash
-        this.hash = computeHash(timestamp)
+        this.hash = await computeHash(timestamp, prevHash, 'lol')
+        console.log(this.hash)
         blockchain.chain.push(this)
-        await blockchain.save()
-        await this.save()
+        const persistChangesToDB = [blockchain.save(), this.save()]
+        await Promise.all(persistChangesToDB)
         return
         // if it doesnt work, make mine a static function and `return new this`
     }
