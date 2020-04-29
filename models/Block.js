@@ -21,12 +21,12 @@ blockSchema.method({
     mine: async function() {
         const { chain, computeHash, timestamp } = this
         // not good ----- const blockchain = await Blockchain.findById(chain)
-        const blockchain = createChain()
+        const blockchain = Blockchain()
         const latestBlock = blockchain.latestBlock()
         const prevHash = await Block.findByIdAndReturnHash(latestBlock)
         this.previousHash = prevHash
         console.log(timestamp)
-        this.hash = await computeHash()
+        this.hash = await computeHash(timestamp)
         console.log(`hash: ${this.hash},
         `)
         blockchain.chain.push(this)

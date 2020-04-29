@@ -1,7 +1,8 @@
 const dotenv = require('dotenv')
 dotenv.config()
-const { promisify } = require('util')
+const socketio = require('socket.io')
 const mongoose = require('mongoose')
+const { promisify } = require('util')
 
 const app = require('./app')
 const { DB_URL, DB_PASSWORD, PORT } = process.env
@@ -23,17 +24,21 @@ const connectToDB = async () => {
     }
 }
 
-const connectToServer = async () => {
-    try {
-        app.listen(port, () => console.log(`port ${port} connected`))
-    } catch (error) {
-        console.log(`cannot listen on port ${port}`)
-        console.log(error.message)
-    }
-}
+const expressServer = app.listen(port, () => console.log(`port ${port} connected`))
+const io = socketio(expressServer)
+
+// const connectToServer = async () => {
+//     try {
+//         server.listen(port, () => console.log(`port ${port} connected`))
+//     } catch (error) {
+//         console.log(`cannot listen on port ${port}`)
+//         console.log(error.message)
+//     }
+// }
+
 
 connectToDB()
-connectToServer()
+// connectToServer()
 
 // app.listen(port)
 

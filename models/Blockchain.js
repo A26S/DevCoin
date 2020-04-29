@@ -33,7 +33,7 @@ blockchainSchema.method({
 })
 
 blockchainSchema.static({
-    createOne: async function() {
+    findOrCreateOne: async function() {
         let blockchain = await this.findOne()
         if (!blockchain) {
             blockchain = await this.create({})
