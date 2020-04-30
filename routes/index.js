@@ -1,5 +1,5 @@
 const router = require('express').Router()
-// const Block = require('../models/Block') ---- this was causing errors!!!
+const Block = require('../models/Block') // ---- this was causing errors!!!
 const Blockchain = require('../models/Blockchain')
 const { createChain } = require('../utils/chainHelpers')
 

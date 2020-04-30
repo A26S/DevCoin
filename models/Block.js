@@ -17,24 +17,18 @@ const blockSchema = new Schema({
 })
 
 blockSchema.method({
-    computeHash: function() {
-        const { timestamp, previousHash, data } = this
-        const hash = computeHash(timestamp, previousHash, data)
-        return hash
-    },
     mine: async function() {
-        const { chain, computeHash, timestamp, nonce } = this
-        // not good ----- const blockchain = await Blockchain.findById(chain)
-        const blockchain = Blockchain()
+        let { timestamp, nonce, hash } = this
+        const blockchain = await Blockchain.findOrCreateOne()
         const latestBlock = blockchain.latestBlock()
         const prevHash = await Block.findByIdAndReturnHash(latestBlock)
         this.previousHash = prevHash
         while (hash.substring(0, DIFFICULTY) !== '0'.repeat(DIFFICULTY)) {
             nonce++
-            this.hash = computeHash()
+            hash = computeHash(timestamp, prevHash, 'lol', nonce)
         }
-        console.log(`hash: ${this.hash},
-        `)
+        this.hash = hash
+        this.nonce = nonce
         blockchain.chain.push(this)
         const persistChangesToDB = [blockchain.save(), this.save()]
         await Promise.all(persistChangesToDB)

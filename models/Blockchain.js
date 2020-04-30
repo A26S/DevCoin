@@ -39,8 +39,6 @@ blockchainSchema.static({
             blockchain = await this.create({})
         }
         if (!blockchain.chain.length) {
-            console.log(typeof Block)
-            console.log(typeof Blockchain)
             const genesisBlock = await Block.genesis(blockchain._id)
             blockchain.chain.push(genesisBlock)
             await blockchain.save()
