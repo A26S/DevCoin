@@ -1,6 +1,6 @@
 const { Schema, model } = require('mongoose')
-const { validateChain } = require('../utils/chainHelpers')
 const Block = require('./Block')
+const { validateChain } = require('../controllers/blockchainController')
 
 const blockchainSchema = new Schema({
     chain: [{ type: Schema.Types.ObjectId, ref: 'Block' }]

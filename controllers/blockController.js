@@ -1,6 +1,17 @@
 const crypto = require('crypto')
 const { MINE_RATE } = process.env
 
+const getHashAndDifficulty = async id => {
+    const Block = require('../models/Blockwtf')
+    const block = await Block.findById(id)
+    const previousHash = block.hash
+    const difficulty = block.difficulty
+    return {
+        previousHash,
+        difficulty
+    }
+} 
+
 const computeHash = (timestamp, previousHash, transactions, nonce) => {
     const { createHash } = crypto
     const hash = createHash('SHA256')
@@ -15,3 +26,4 @@ const adjustDifficulty = (difficulty, currentTime) => {
 
 exports.computeHash = computeHash
 exports.adjustDifficulty = adjustDifficulty
+exports.getHashAndDifficulty = getHashAndDifficulty

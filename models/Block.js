@@ -1,5 +1,5 @@
 const { Schema, model } = require('mongoose')
-const { computeHash, adjustDifficulty } = require('../utils/computeHash')
+const { computeHash, adjustDifficulty, getHashAndDifficulty } = require('../controllers/blockController')
 const { createChain } = require('../utils/chainHelpers')
 const Blockchain = require('./Blockchain')
 
@@ -21,7 +21,7 @@ blockSchema.method({
         let { timestamp, hash, nonce } = this
         const blockchain = await Blockchain.findOrCreateOne()
         const latestBlock = blockchain.latestBlock()
-        let { previousHash, difficulty } = await Block.getHashAndDifficulty(latestBlock)
+        let { previousHash, difficulty } = await getHashAndDifficulty(latestBlock)
         while (hash.substring(0, difficulty) !== '0'.repeat(difficulty)) {
             nonce++
             hash = computeHash(timestamp, previousHash, 'lol', nonce)
@@ -48,15 +48,6 @@ blockSchema.static({
             hash: '0000' 
         })
         return genesisBlock
-    },
-    getHashAndDifficulty: async function(id) {
-        const block = await this.findById(id)
-        const previousHash = block.hash
-        const difficulty = block.difficulty
-        return {
-            previousHash,
-            difficulty
-        }
     }
 })
 

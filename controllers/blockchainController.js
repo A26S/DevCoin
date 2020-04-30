@@ -1,4 +1,4 @@
-const Block = require('../models/Blockwtf')
+const Block = require('../models/Block')
 const Blockchain = require('../models/Blockchain')
 
 const createChain = async () => {
@@ -27,5 +27,27 @@ const validateChain = (currentBlock, prevBlock) => {
     return true
 }
 
+const clearAll = async (req, res, next) => {
+    const blocks = await Block.find()
+    const chain = await Blockchain.find()
+    const blockchain = [...blocks, ...chain]
+    for await (const element of blockchain) {
+        element.deleteOne()
+    }
+    return res.json({
+        message: 'deleted the blockchain and all blocks',
+        blockchain
+    })
+}
+
+const show = async (req, res, next) => {    
+    const blockchain = await Blockchain.findOrCreateOne()
+    return res.json({
+        blockchain
+    })
+}
+
 exports.validateChain = validateChain
 exports.createChain = createChain
+exports.clearAll = clearAll
+exports.show = show
