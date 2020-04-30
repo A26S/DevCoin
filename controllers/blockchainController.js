@@ -1,5 +1,6 @@
 const Block = require('../models/Block')
 const Blockchain = require('../models/Blockchain')
+const CustomError = require('../utils/CustomError')
 
 const createChain = async () => {
     let blockchain = await Blockchain.findOne()
@@ -41,10 +42,18 @@ const clearAll = async (req, res, next) => {
 }
 
 const show = async (req, res, next) => {    
-    const blockchain = await Blockchain.findOrCreateOne()
-    return res.json({
-        blockchain
-    })
+    try {
+        const blockchain = await Blockchain.findOrCreateOne()
+        if(!blockchain) {
+            const error = new CustomError('could not create blockchain', 500)
+            throw error
+        }
+        return res.json({
+            blockchain
+        })
+    } catch (error) {
+        return next(error)
+    }
 }
 
 exports.validateChain = validateChain
