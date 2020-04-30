@@ -1,6 +1,5 @@
 const { Schema, model } = require('mongoose')
 const { computeHash, adjustDifficulty, getHashAndDifficulty } = require('../controllers/blockController')
-const { createChain } = require('../utils/chainHelpers')
 const Blockchain = require('./Blockchain')
 
 let { DIFFICULTY, MINE_RATE } = process.env

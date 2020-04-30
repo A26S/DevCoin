@@ -1,8 +1,6 @@
 const router = require('express').Router()
 const { clearAll, show } = require('../controllers/blockchainController')
-const Blockchain = require('../models/Blockchain')
-const Block = require('../models/Blockwtf') // ---- this was causing errors!!!
-const { createChain } = require('../utils/chainHelpers')
+const Block = require('../models/Block') // ---- this was causing errors!!!
 
 router.get('/blocks', show)
 

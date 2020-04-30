@@ -14,8 +14,6 @@ blockchainSchema.method({
     },
     addBlock: async function(newBlock) {
         const { chain } = this
-        // const latestBlock = this.latestBlock()
-        // newBlock.updateOne({ previousHash: latestBlock.hash })
         chain.push(newBlock)
         await this.save()
         return

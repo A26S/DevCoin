@@ -2,7 +2,7 @@ const crypto = require('crypto')
 const { MINE_RATE } = process.env
 
 const getHashAndDifficulty = async id => {
-    const Block = require('../models/Blockwtf')
+    const Block = require('../models/Block')
     const block = await Block.findById(id)
     const previousHash = block.hash
     const difficulty = block.difficulty
