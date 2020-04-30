@@ -3,13 +3,17 @@ const { computeHash } = require('../utils/computeHash')
 const { createChain } = require('../utils/chainHelpers')
 const Blockchain = require('./Blockchain')
 
+
+const DIFFICULTY = 2
+
 const blockSchema = new Schema({
     timestamp: { type: String, default: Date.now },
     previousHash: { type: String },
     // transactions: [{}],
     data: { type: String },
     chain: { type: Schema.Types.ObjectId, ref: 'Blockchain', default: '5ea47b69acd66cc296101ec1' },
-    hash: { type: String, default: '' }
+    hash: { type: String, default: '' },
+    nonce: { type: Number, default: 0 }
 })
 
 blockSchema.method({
@@ -19,14 +23,16 @@ blockSchema.method({
         return hash
     },
     mine: async function() {
-        const { chain, computeHash, timestamp } = this
+        const { chain, computeHash, timestamp, nonce } = this
         // not good ----- const blockchain = await Blockchain.findById(chain)
         const blockchain = Blockchain()
         const latestBlock = blockchain.latestBlock()
         const prevHash = await Block.findByIdAndReturnHash(latestBlock)
         this.previousHash = prevHash
-        console.log(timestamp)
-        this.hash = await computeHash(timestamp)
+        while (hash.substring(0, DIFFICULTY) !== '0'.repeat(DIFFICULTY)) {
+            nonce++
+            this.hash = computeHash()
+        }
         console.log(`hash: ${this.hash},
         `)
         blockchain.chain.push(this)
