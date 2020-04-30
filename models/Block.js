@@ -1,5 +1,5 @@
 const { Schema, model } = require('mongoose')
-const { computeHash } = require('../utils/computeHash')
+const { computeHash, adjustDifficulty } = require('../utils/computeHash')
 const { createChain } = require('../utils/chainHelpers')
 const Blockchain = require('./Blockchain')
 
@@ -21,17 +21,18 @@ blockSchema.method({
         let { timestamp, hash, nonce } = this
         const blockchain = await Blockchain.findOrCreateOne()
         const latestBlock = blockchain.latestBlock()
-        const previousHash = await Block.findByIdAndReturnHash(latestBlock)
-        console.log(DIFFICULTY++)
-        while (hash.substring(0, DIFFICULTY) !== '0'.repeat(DIFFICULTY)) {
+        let { previousHash, difficulty } = await Block.getHashAndDifficulty(latestBlock)
+        while (hash.substring(0, difficulty) !== '0'.repeat(difficulty)) {
             nonce++
             hash = computeHash(timestamp, previousHash, 'lol', nonce)
         }
+        // console.log( Date.now() - timestamp )
+        difficulty = adjustDifficulty(difficulty, timestamp)
         this.previousHash = previousHash
         this.hash = hash
         this.nonce = nonce
-        blockchain.chain.push(this)
-        const persistChangesToDB = [blockchain.save(), this.save()]
+        this.difficulty = difficulty
+        const persistChangesToDB = [blockchain.addBlock(this), this.save()]
         await Promise.all(persistChangesToDB)
         return
         // if it doesnt work, make mine a static function and `return new this`
@@ -48,9 +49,14 @@ blockSchema.static({
         })
         return genesisBlock
     },
-    findByIdAndReturnHash: async function(id) {
+    getHashAndDifficulty: async function(id) {
         const block = await this.findById(id)
-        return block.hash
+        const previousHash = block.hash
+        const difficulty = block.difficulty
+        return {
+            previousHash,
+            difficulty
+        }
     }
 })
 
