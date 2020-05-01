@@ -1,8 +1,9 @@
 const { Schema, model } = require('mongoose')
-const { computeHash, adjustDifficulty, getHashAndDifficulty } = require('../controllers/blockController')
 const Blockchain = require('./Blockchain')
+const { adjustDifficulty, getHashAndDifficulty } = require('../controllers/blockController')
+const { computeHash } = require('../utils/crypto')
 
-let { DIFFICULTY, MINE_RATE } = process.env
+let { DIFFICULTY } = process.env
 
 const blockSchema = new Schema({
     timestamp: { type: String, default: Date.now },

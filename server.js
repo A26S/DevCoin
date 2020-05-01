@@ -67,11 +67,19 @@ exports.io = io
 
 // console.log(computeHash('lol', 'ok', 'yes'))
 
-const crypto = require('crypto')
+// const crypto = require('crypto')
 
-const ec = crypto.createECDH('secp256k1')
-ec.generateKeys('hex')
-const publicKey = ec.getPublicKey('hex')
-const privateKey = ec.getPrivateKey('hex')
+// const ec = crypto.createECDH('secp256k1')
+// ec.generateKeys('hex')
+// const publicKey = ec.getPublicKey('hex')
+// const privateKey = ec.getPrivateKey('hex')
+// console.log('public: ', publicKey)
+// console.log('private: ', privateKey)
+const { ec } = require('elliptic')
+
+const ellipticCurve = new ec('secp256k1')
+const keys = ellipticCurve.genKeyPair()
+const publicKey = keys.getPublic('hex')
+const privateKey = keys.getPrivate('hex')
 console.log('public: ', publicKey)
 console.log('private: ', privateKey)

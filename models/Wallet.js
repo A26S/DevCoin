@@ -1,5 +1,5 @@
 const { Schema, model } = require('mongoose')
-const { createECDH } = require('crypto')
+const { generateKeyPair } = require('../utils/crypto')
 
 const walletSchema = new Schema({
     balance: { type: Number, default: 10 },
@@ -9,10 +9,9 @@ const walletSchema = new Schema({
 
 walletSchema.method({
     generateKeyPair: async function() {
-        const ec = createECDH('secp256k1')
-        ec.generateKeys('hex')
-        this.publicKey = ec.getPublicKey('hex')
-        this.privateKey = ec.getPrivateKey('hex')
+        const { publicKey, privateKey } = generateKeyPair()
+        this.publicKey = publicKey
+        this.privateKey = privateKey
         await this.save()
         return
     }

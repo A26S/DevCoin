@@ -1,6 +1,8 @@
 const router = require('express').Router()
 const { clearAll, show } = require('../controllers/blockchainController')
 const Block = require('../models/Block') // ---- this was causing errors!!!
+const Wallet = require('../models/Wallet')
+const Transaction = require('../models/Transaction')
 
 router.get('/blocks', show)
 
@@ -9,6 +11,13 @@ router.get('/mine', async (req, res, next) => {
     await block.mine()
     return res.json({
         block
+    })
+})
+
+router.post('transaction/new', (req, res, next) => {
+    const wallet = new Wallet()
+    return res.json({
+        wallet
     })
 })
 
