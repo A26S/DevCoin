@@ -1,5 +1,6 @@
 const { Schema, model } = require('mongoose')
 const Block = require('./Block')
+const CustomError = require('../utils/CustomError')
 const { validateChain } = require('../controllers/blockchainController')
 
 const blockchainSchema = new Schema({
@@ -31,18 +32,22 @@ blockchainSchema.method({
 })
 
 blockchainSchema.static({
-    findOrCreateOne: async function() {
-        let blockchain = await this.findOne()
-        if (!blockchain) {
-            blockchain = await this.create({})
-        }
-        if (!blockchain.chain.length) {
-            const genesisBlock = await Block.genesis(blockchain._id)
-            blockchain.chain.push(genesisBlock)
-            await blockchain.save()
-        }
-        console.log(`BLOCKCHAINNN ${blockchain}`)
-        return blockchain
+    findOrCreateOne: async function() {   
+        try { 
+            let blockchain = await this.findOne()
+            if (!blockchain) {
+                blockchain = await this.create({})
+            }
+            if (!blockchain.chain.length) {
+                const genesisBlock = await Block.genesis(blockchain._id)
+                blockchain.chain.push(genesisBlock)
+                await blockchain.save()
+            }
+            console.log(`BLOCKCHAINNN ${blockchain}`)
+            return blockchain
+        } catch (error) {
+            throw error
+        }   
     }
 })
 

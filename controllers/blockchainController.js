@@ -44,11 +44,13 @@ const clearAll = async (req, res, next) => {
 const show = async (req, res, next) => {    
     try {
         const blockchain = await Blockchain.findOrCreateOne()
-        if(!blockchain) {
-            const error = new CustomError('could not create blockchain', 500)
+        console.log('blockchhaainn', blockchain)
+        if (!blockchain) {
+            const error = new CustomError('could not create blockchain')
+            error.status = 500
             throw error
-        }
-        return res.json({
+        }``
+        return res.status(200).json({
             blockchain
         })
     } catch (error) {

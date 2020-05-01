@@ -10,6 +10,7 @@ app.use(clientSide)
 
 app.use(routes)
 
+//error handling
 app.use(notFound)
 app.use(errorHandler)
 
