@@ -44,7 +44,8 @@ blockSchema.static({
             timestamp: '1587569720271',
             previousHash: '-',
             chain,
-            hash: '0000' 
+            hash: '0000',
+            difficulty: DIFFICULTY
         })
         return genesisBlock
     }

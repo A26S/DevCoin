@@ -66,3 +66,12 @@ exports.io = io
 // const { computeHash } = require('./utils/computeHash')
 
 // console.log(computeHash('lol', 'ok', 'yes'))
+
+const crypto = require('crypto')
+
+const ec = crypto.createECDH('secp256k1')
+ec.generateKeys('hex')
+const publicKey = ec.getPublicKey('hex')
+const privateKey = ec.getPrivateKey('hex')
+console.log('public: ', publicKey)
+console.log('private: ', privateKey)

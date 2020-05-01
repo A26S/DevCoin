@@ -1,5 +1,4 @@
 const { Schema, model } = require('mongoose')
-const Block = require('./Block')
 const CustomError = require('../utils/CustomError')
 const { validateChain } = require('../controllers/blockchainController')
 
@@ -33,6 +32,7 @@ blockchainSchema.method({
 
 blockchainSchema.static({
     findOrCreateOne: async function() {   
+        const Block = require('./Block') // ---- require Block here because of a weird bug!!!
         try { 
             let blockchain = await this.findOne()
             if (!blockchain) {
