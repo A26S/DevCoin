@@ -14,12 +14,20 @@ router.get('/mine', async (req, res, next) => {
     })
 })
 
-router.post('transaction/new', (req, res, next) => {
+router.post('/send', async (req, res, next) => {
     const wallet = new Wallet()
+    await wallet.generateKeyPair()
     return res.json({
         wallet
     })
 })
+
+// router.post('transaction/new', (req, res, next) => {
+//     const wallet = Wallet.new()
+//     return res.json({
+//         wallet
+//     })
+// })
 
 router.delete('/clear', clearAll)
 
