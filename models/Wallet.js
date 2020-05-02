@@ -1,4 +1,4 @@
-const { Schema, model, Mixed } = require('mongoose')
+const { Schema, model } = require('mongoose')
 const { generateKeyPair } = require('../utils/crypto')
 
 const walletSchema = new Schema({
@@ -12,8 +12,6 @@ walletSchema.method({
         const { publicKey, privateKey } = generateKeyPair()
         this.publicKey = publicKey
         this.privateKey = privateKey
-        await this.save()
-        return
     },
     signTransaction: function(hash) {
         const { keyPair } = this
@@ -21,15 +19,14 @@ walletSchema.method({
     }
 })
 
-// walletSchema.static({
-//     new: async function() {
-//         const wallet = new this()
-//         wallet.generateKeyPair()
-//         // console.log(wallet)
-//         await wallet.save()
-//         return 
-//     }
-// })
+walletSchema.static({
+    new: async function() {
+        const wallet = new this()
+        wallet.generateKeyPair()
+        await wallet.save()
+        return wallet
+    }
+})
 
 const Wallet = model('Wallet', walletSchema)
 
