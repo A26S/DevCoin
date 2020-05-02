@@ -1,5 +1,7 @@
 const Block = require('../models/Block')
 const Blockchain = require('../models/Blockchain')
+const Wallet = require('../models/Wallet')
+const Transaction = require('../models/Transaction')
 const CustomError = require('../utils/CustomError')
 
 const createChain = async () => {
@@ -29,16 +31,23 @@ const validateChain = (currentBlock, prevBlock) => {
 }
 
 const clearAll = async (req, res, next) => {
-    const blocks = await Block.find()
-    const chain = await Blockchain.find()
-    const blockchain = [...blocks, ...chain]
-    for await (const element of blockchain) {
-        element.deleteOne()
+    try {
+        const blocks = await Block.find()
+        const chain = await Blockchain.find()
+        const wallets = await Wallet.find()
+        const transactions = await Transaction.find()
+        const blockchain = [...blocks, ...chain, ...wallets, ...transactions]
+        for await (const element of blockchain) {
+            element.deleteOne()
+        }
+        return res.json({
+            message: 'deleted the blockchain and all blocks',
+            blockchain
+        })
+    } catch (error) {
+        const err = new CustomError('could not access database', 500)
+        return next(err)
     }
-    return res.json({
-        message: 'deleted the blockchain and all blocks',
-        blockchain
-    })
 }
 
 const show = async (req, res, next) => {    

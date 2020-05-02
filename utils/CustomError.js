@@ -1,8 +1,8 @@
 class CustomError extends Error {
-    constructor(msg, ...params) {
-        super(...params)
-        this.msg = msg
-        this.status = status || 500
+    constructor(message, status) {
+        super(message)
+        this.message = message || 'an unknown error occured'
+        this.status = status
     }
 }
 

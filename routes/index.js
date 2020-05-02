@@ -14,11 +14,28 @@ router.get('/mine', async (req, res, next) => {
     })
 })
 
+router.post('/create', async (req, res, next) => {
+    try {
+        const wallet = await Wallet.new()
+        return res.json({
+            wallet
+        })
+    } catch (error) {
+        return next(error)
+    }
+})
+
 router.post('/send', async (req, res, next) => {
-    const wallet = await Wallet.new()
-    return res.json({
-        wallet
-    })
+    const wallet1 = await Wallet.new()
+    const wallet2 = await Wallet.new()
+    // try {
+        const transaction = await Transaction.new(wallet1, wallet2, 2)
+        return res.json({
+            transaction
+        })
+    // } catch (error) {
+    //      next(error)
+    // }
 })
 
 router.delete('/clear', clearAll)

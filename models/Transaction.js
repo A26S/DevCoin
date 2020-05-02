@@ -3,8 +3,8 @@ const CustomError = require('../utils/CustomError')
 const { computeHash, verifySignature } = require('../utils/crypto')
 
 const transactionSchema = new Schema({
-    input: { type: String, default: null },
-    outputs: { type: String, default: [] }
+    input: { type: Object, default: {} },
+    outputs: { type: Object, default: [] }
 })
 
 transactionSchema.method({
@@ -18,6 +18,7 @@ transactionSchema.method({
             address: publicKey,
             signature: signTransaction(hash)
         }
+        console.log(this)
         await this.save()
         return
     },
@@ -32,7 +33,7 @@ transactionSchema.method({
 transactionSchema.static({
     new: async function(sender, recipient, amount) {
         if (amount > sender.balance) {
-            const error = new CustomError('not enough balance')
+            const error = new CustomError('not enough balance', 401)
             throw error
         } 
         const transaction = new this()
@@ -45,8 +46,7 @@ transactionSchema.static({
             address: recipient
         }
         transaction.outputs.push(output1, output2)
-        // await transaction.save()
-        transaction.sign(sender)
+        await transaction.sign(sender)
         return transaction
     }
 })
