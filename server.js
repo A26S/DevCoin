@@ -63,7 +63,7 @@ exports.io = io
 // block.save()
 
 
-// const { computeHash } = require('./utils/computeHash')
+const { getKeyPair, createSignature } = require('./utils/crypto')
 
 // console.log(computeHash('lol', 'ok', 'yes'))
 
@@ -75,16 +75,26 @@ exports.io = io
 // const privateKey = ec.getPrivateKey('hex')
 // console.log('public: ', publicKey)
 // console.log('private: ', privateKey)
-// const { ec } = require('elliptic')
+const { ec } = require('elliptic')
 
-// const ellipticCurve = new ec('secp256k1')
-// const keys = ellipticCurve.genKeyPair()
-// const publicKey = keys.getPublic('hex')
-// const privateKey = keys.getPrivate('hex')
+const ellipticCurve = new ec('secp256k1')
+const keys = ellipticCurve.genKeyPair()
+const publicKey = keys.getPublic('hex')
+const privateKey = keys.getPrivate('hex')
 // console.log('public: ', publicKey)
 // console.log('private: ', privateKey)
 // console.log('keys: ', keys) 
-// const keyfromPublic = ellipticCurve.keyFromPublic(publicKey, 'hex')
-// console.log('keyfromPublic: ', keyfromPublic) 
+// const keyFromPublic = ellipticCurve.keyFromPrivate(privateKey, 'hex')
+// keyFromPublic.getPublic('hex')
+// keyFromPublic.getPrivate('hex')
+// const signature = keys.sign('lol').toDER()
+// console.log('sig: ', signature)
+// console.log('keyfromPublic: ', keyFromPublic) 
 // const newPublicKey = keyfromPublic.getPublic('hex')
 // console.log('newPublicKey', newPublicKey)
+
+const keyFromPrivate = getKeyPair(privateKey)
+// console.log(JSON.stringify(keyFromPrivate) === JSON.stringify(keys))
+// console.log(keyFromPrivate)
+const sig = createSignature(keyFromPrivate, 'lol')
+console.log(sig)

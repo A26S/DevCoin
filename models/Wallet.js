@@ -1,5 +1,5 @@
 const { Schema, model } = require('mongoose')
-const { generateKeyPair, getKeyPair } = require('../utils/crypto')
+const { generateKeyPair, getKeyPair, createSignature } = require('../utils/crypto')
 
 const walletSchema = new Schema({
     balance: { type: Number, default: 10 },
@@ -14,10 +14,9 @@ walletSchema.method({
         this.privateKey = privateKey
     },
     signTransaction: function(hash) {
-        const { publicKey } = this
-        const keyPair = getKeyPair(publicKey)
-        const signature = keyPair.sign(hash, 'base64')
-        return signature.toDER('hex')
+        const { privateKey } = this
+        const signature = createSignature(privateKey, hash)
+        return signature
     }
 })
 

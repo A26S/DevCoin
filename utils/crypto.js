@@ -19,17 +19,24 @@ const generateKeyPair = () => {
     return { publicKey, privateKey }
 }
 
-const getKeyPair = publicKey => {
-    const keyPair = ellipticCurve.keyFromPublic(publicKey, 'hex')
+const getKeyPair = privateKey => {
+    const keyPair = ellipticCurve.keyFromPrivate(privateKey, 'hex')
     return keyPair
 }
 
+const createSignature = (privateKey, hash) => {
+    const keyPair = getKeyPair(privateKey)
+    const signature = keyPair.sign(hash)
+    return signature
+}
+
 const verifySignature = (publicKey, signature, hash) => {
-    const keyPair = ellipticCurve.keyFromPublic(publicKey)
+    const keyPair = getKeyPair(publicKey)
     keyPair.verify(hash, signature)
 }
 
 exports.computeHash = computeHash
 exports.generateKeyPair = generateKeyPair
 exports.getKeyPair = getKeyPair
+exports.createSignature = createSignature
 exports.verifySignature = verifySignature
