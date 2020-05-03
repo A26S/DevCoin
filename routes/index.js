@@ -28,9 +28,9 @@ router.post('/create', async (req, res, next) => {
 router.post('/send', async (req, res, next) => {
     const wallet1 = await Wallet.new()
     const wallet2 = await Wallet.new()
-    console.log(wallet1)
     // try {
         const transaction = await Transaction.new(wallet1, wallet2, 2)
+        console.log(transaction.verifySignature(wallet1))
         return res.json({
             transaction
         })

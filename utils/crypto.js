@@ -30,9 +30,9 @@ const createSignature = (privateKey, hash) => {
     return signature
 }
 
-const verifySignature = (publicKey, signature, hash) => {
-    const keyPair = getKeyPair(publicKey)
-    keyPair.verify(hash, signature)
+const verifySignature = (keyPair, signature, hash) => {
+    // const keyPair = getKeyPair(publicKey)
+    return keyPair.verify(hash, signature)
 }
 
 exports.computeHash = computeHash

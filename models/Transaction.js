@@ -1,6 +1,6 @@
 const { Schema, model } = require('mongoose')
 const CustomError = require('../utils/CustomError')
-const { computeHash, verifySignature } = require('../utils/crypto')
+const { computeHash, getKeyPair, verifySignature } = require('../utils/crypto')
 
 const transactionSchema = new Schema({
     input: { type: Object, default: {} },
@@ -18,15 +18,15 @@ transactionSchema.method({
             address: publicKey,
             signature: sender.signTransaction(hash)
         }
-        console.log(this)
         await this.save()
         return
     },
-    verifySignature: function() {
-        const { publicKey, input, outputs } = this
+    verifySignature: function(sender) {
+        const { input, outputs } = this
         const { signature } = input
+        const keyPair = getKeyPair(sender.privateKey)
         const hash = computeHash(JSON.stringify(outputs))
-        return verifySignature(publicKey, signature, hash)
+        return verifySignature(keyPair, signature, hash)
     }
 })
 
