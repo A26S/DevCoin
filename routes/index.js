@@ -1,8 +1,8 @@
 const router = require('express').Router()
 const { clearAll, show } = require('../controllers/blockchainController')
+const { createTransaction } = require('../controllers/transactionsController')
 const Block = require('../models/Block') // ---- this was causing errors!!!
-const Wallet = require('../models/Wallet')
-const Transaction = require('../models/Transaction')
+
 
 router.get('/blocks', show)
 
@@ -25,19 +25,7 @@ router.post('/create', async (req, res, next) => {
     }
 })
 
-router.post('/send', async (req, res, next) => {
-    const wallet1 = await Wallet.new()
-    const wallet2 = await Wallet.new()
-    // try {
-        const transaction = await Transaction.new(wallet1, wallet2, 2)
-        console.log(transaction.verifySignature(wallet1))
-        return res.json({
-            transaction
-        })
-    // } catch (error) {
-    //      next(error)
-    // }
-})
+router.post('/send', createTransaction)
 
 router.delete('/clear', clearAll)
 

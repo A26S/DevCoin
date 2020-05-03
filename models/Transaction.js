@@ -10,8 +10,8 @@ const transactionSchema = new Schema({
 transactionSchema.method({
     sign: async function(sender) {
         const { balance, publicKey } = sender
-        const data = JSON.stringify(this.outputs)
-        const hash = computeHash(data)
+        // const data = JSON.stringify(this.outputs)
+        const hash = computeHash(this.outputs)
         this.input = {
             timestamp: Date.now(),
             amount: balance,
@@ -22,11 +22,21 @@ transactionSchema.method({
         return
     },
     verifySignature: function(sender) {
-        const { input, outputs } = this
-        const { signature } = input
-        const keyPair = getKeyPair(sender.privateKey)
-        const hash = computeHash(JSON.stringify(outputs))
-        return verifySignature(keyPair, signature, hash)
+        const { input: { signature }, outputs } = this
+        const { privateKey } = sender
+        const keyPair = getKeyPair(privateKey)
+        const hash = computeHash(outputs)
+        const verified = verifySignature(keyPair, signature, hash)
+        if (verified) return verified
+        const error = new CustomError('invalid signature')
+        throw error
+    },
+    complete: async function(sender, recipient) {
+        const { outputs } = this
+        sender.balance = outputs[0].newBalance
+        recipient.balance += outputs[1].amount
+        await Promise.all([sender.save(), recipient.save()])
+        return
     }
 })
 
@@ -38,7 +48,7 @@ transactionSchema.static({
         } 
         const transaction = new this()
         const output1 = {
-            amount: sender.balance - amount,
+            newBalance: sender.balance - amount,
             address: sender.publicKey
         }
         const output2 = {

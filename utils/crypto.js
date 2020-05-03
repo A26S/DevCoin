@@ -6,7 +6,7 @@ const computeHash = (...args) => {
     const hash = createHash('SHA256')
     let message = ''
     args.map(element => {
-        message += element.toString()
+        message += JSON.stringify(element)
     })
     hash.update(`${message}`)
     return hash.digest('hex')

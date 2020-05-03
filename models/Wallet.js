@@ -1,5 +1,6 @@
 const { Schema, model } = require('mongoose')
 const { generateKeyPair, createSignature } = require('../utils/crypto')
+const CustomError = require('../utils/CustomError')
 
 const walletSchema = new Schema({
     balance: { type: Number, default: 10 },
