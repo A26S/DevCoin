@@ -13,9 +13,10 @@ walletSchema.method({
         this.publicKey = publicKey
         this.privateKey = privateKey
     },
-    signTransaction: function(hash) {
+    signTransaction: function() {
         const { privateKey } = this
-        const signature = createSignature(privateKey, hash)
+        console.log('pk:   ', this)
+        const signature = createSignature(privateKey, 'hash')
         return signature
     }
 })

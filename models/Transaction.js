@@ -9,14 +9,14 @@ const transactionSchema = new Schema({
 
 transactionSchema.method({
     sign: async function(sender) {
-        const { balance, publicKey, signTransaction } = sender
+        const { balance, publicKey } = sender
         const data = JSON.stringify(this.outputs)
         const hash = computeHash(data)
         this.input = {
             timestamp: Date.now(),
             amount: balance,
             address: publicKey,
-            signature: signTransaction(hash)
+            signature: sender.signTransaction(hash)
         }
         console.log(this)
         await this.save()
