@@ -28,8 +28,8 @@ const connectToDB = async () => {
 const expressServer = app.listen(port, () => console.log(`port ${port} connected`))
 const io = socketio(expressServer)
 
-io.on('connect', socket => {
-    
+io.on('connection', socket => {
+    console.log('socket', socket.id)
 })
 
 // const connectToServer = async () => {
