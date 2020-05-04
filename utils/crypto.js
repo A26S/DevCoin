@@ -31,7 +31,6 @@ const createSignature = (privateKey, hash) => {
 }
 
 const verifySignature = (keyPair, signature, hash) => {
-    // const keyPair = getKeyPair(publicKey)
     return keyPair.verify(hash, signature)
 }
 

@@ -10,7 +10,6 @@ const transactionSchema = new Schema({
 transactionSchema.method({
     sign: async function(sender) {
         const { balance, publicKey } = sender
-        // const data = JSON.stringify(this.outputs)
         const hash = computeHash(this.outputs)
         this.input = {
             timestamp: Date.now(),
@@ -33,10 +32,17 @@ transactionSchema.method({
     },
     complete: async function(sender, recipient) {
         const { outputs } = this
+        const from = sender.publicKey
+        const to = recipient.publicKey
+        const amount = outputs[1].amount
         sender.balance = outputs[0].newBalance
-        recipient.balance += outputs[1].amount
+        recipient.balance += amount
         await Promise.all([sender.save(), recipient.save()])
-        return
+        return { 
+            amount,
+            from, 
+            to
+        }
     }
 })
 

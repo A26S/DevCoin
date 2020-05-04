@@ -32,7 +32,7 @@ blockchainSchema.method({
 
 blockchainSchema.static({
     findOrCreateOne: async function() {   
-        const Block = require('./Block') // ---- require Block here because of a weird bug!!!
+        const Block = require('./Block') // ---- this was causing errors!!!
         try { 
             let blockchain = await this.findOne()
             if (!blockchain) {
@@ -43,9 +43,9 @@ blockchainSchema.static({
                 blockchain.chain.push(genesisBlock)
                 await blockchain.save()
             }
-            console.log(`BLOCKCHAINNN ${blockchain}`)
             return blockchain
-        } catch (error) {
+        } catch (err) {
+            const error = new CustomError('could not get the blockchain')
             throw error
         }   
     }
