@@ -4,9 +4,8 @@ const ellipticCurve = new ec('secp256k1')
 
 const computeHash = (...args) => {
     const hash = createHash('SHA256')
-    let message = ''
-    args.map(element => {
-        message += JSON.stringify(element)
+    const message = args.reduce((message = '', element) => {
+        return message += JSON.stringify(element)
     })
     hash.update(`${message}`)
     return hash.digest('hex')

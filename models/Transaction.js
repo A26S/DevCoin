@@ -4,7 +4,7 @@ const { computeHash, getKeyPair, verifySignature } = require('../utils/crypto')
 
 const transactionSchema = new Schema({
     input: { type: Object, default: {} },
-    outputs: { type: Object, default: [] }
+    outputs: [{ type: Object }]
 })
 
 transactionSchema.method({
