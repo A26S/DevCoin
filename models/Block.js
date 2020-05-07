@@ -8,8 +8,7 @@ let { DIFFICULTY } = process.env
 const blockSchema = new Schema({
     timestamp: { type: String, default: Date.now },
     previousHash: { type: String },
-    // transactions: [{}],
-    data: { type: String },
+    transactions: [{ type: Schema.Types.ObjectId, ref: 'Transaction' }],
     chain: { type: Schema.Types.ObjectId, ref: 'Blockchain' },
     hash: { type: String, default: '' },
     nonce: { type: Number, default: 0 },
@@ -26,7 +25,6 @@ blockSchema.method({
             nonce++
             hash = computeHash(timestamp, previousHash, 'lol', nonce)
         }
-        // console.log( Date.now() - timestamp )
         difficulty = adjustDifficulty(difficulty, timestamp)
         this.previousHash = previousHash
         this.hash = hash

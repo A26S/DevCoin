@@ -33,20 +33,22 @@ const validateChain = async (currentId, previousId) => {
 
 
 const show = async (req, res, next) => {    
-    // try {
+    try {
         const blockchain = await Blockchain.findOrCreateOne()
         if (!blockchain) {
-            const error = new CustomError('could not create blockchain')
-            error.status = 500
+            const error = new CustomError('could not create blockchain', 500)
             throw error
         }
-        console.log('is valid? ', await blockchain.isValid().then(res => console.log(res)))
+        const { io, client } = require('../server') // ---- this import was causing errors!!!
+        io.on('connect', socket => {
+            socket.emit('blockchain', blockchain)
+        })
         return res.status(200).json({
             blockchain
         })
-    // } catch (error) {
-    //     return next(error)
-    // }
+    } catch (error) {
+        return next(error)
+    }
 }
         
 const clearAll = async (req, res, next) => {

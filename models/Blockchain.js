@@ -1,6 +1,7 @@
 const { Schema, model } = require('mongoose')
 const CustomError = require('../utils/CustomError')
 const Wallet = require('../models/Wallet')
+const Transaction = require('../models/Transaction')
 
 const blockchainSchema = new Schema({
     chain: [{ type: Schema.Types.ObjectId, ref: 'Block' }],
@@ -14,17 +15,6 @@ blockchainSchema.method({
         this.wallet = wallet
         await Promise.all([this.save(), wallet.save()])
         return wallet
-    },
-    latestBlock: function() {
-        const { chain } = this
-        const latestBlock = [...chain].pop()
-        return latestBlock
-    },
-    addBlock: async function(newBlock) {
-        const { chain } = this
-        chain.push(newBlock)
-        await this.save()
-        return
     },
     isValid: async function() {
         const { validateChain } = require('../controllers/blockchainController') // ---- this was causing errors!
@@ -41,6 +31,21 @@ blockchainSchema.method({
         })
         // console.log(isValid)
         return isValid
+    },
+    latestBlock: function() {
+        const { chain } = this
+        const latestBlock = [...chain].pop()
+        return latestBlock
+    },
+    addBlock: async function(newBlock) {
+        const { chain } = this
+        chain.push(newBlock)
+        await this.save()
+        return
+    },
+    rewardMiner: async function(miner) {
+        const wallet = await Wallet.findById(this.wallet)
+        const transaction = await Transaction.minerReward(wallet, miner)
     }
 })
 

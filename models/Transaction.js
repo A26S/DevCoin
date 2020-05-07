@@ -1,10 +1,14 @@
 const { Schema, model } = require('mongoose')
+const TransactionPool = require('./TransactionPool')
 const CustomError = require('../utils/CustomError')
 const { computeHash, getKeyPair, verifySignature } = require('../utils/crypto')
+const { MINER_REWARD } = process.env
 
 const transactionSchema = new Schema({
     input: { type: Object, default: {} },
-    outputs: [{ type: Object }]
+    outputs: [{ type: Object }],
+    status: { type: String, default: 'Unconfirmed' },
+    pool: { type: Schema.Types.ObjectId, ref: 'TransactionPool' }
 })
 
 transactionSchema.method({
@@ -30,18 +34,19 @@ transactionSchema.method({
         const error = new CustomError('invalid signature')
         throw error
     },
-    complete: async function(sender, recipient) {
-        const { outputs } = this
+    addToPool: async function(sender, recipient) {
+        const { outputs, pool, status } = this
         const from = sender.publicKey
         const to = recipient.publicKey
         const amount = outputs[1].amount
         sender.balance = outputs[0].newBalance
         recipient.balance += amount
-        await Promise.all([sender.save(), recipient.save()])
+        await Promise.all([sender.save(), recipient.save()], pool.add(this))
         return { 
             amount,
             from, 
-            to
+            to, 
+            status
         }
     }
 })
@@ -62,8 +67,31 @@ transactionSchema.static({
             address: recipient
         }
         transaction.outputs.push(output1, output2)
+        const pool = await TransactionPool.findOrCreateOne()
+        transaction.pool = pool
         await transaction.sign(sender)
         return transaction
+    },
+    minerReward: async function(blockchainWallet, minerWallet) {
+        if (amount > blockchainWallet.balance) {
+            const error = new CustomError('there is no more currency that will go into circulation', 401)
+            throw error
+        } 
+        const transaction = new this()
+        const output1 = {
+            newBalance: blockchainWallet.balance - MINER_REWARD,
+            address: blockchainWallet.publicKey
+        }
+        const output2 = {
+            amount: MINER_REWARD,
+            address: minerWallet
+        }
+        transaction.outputs.push(output1, output2)
+        await transaction.sign(blockchainWallet)
+        blockchainWallet.balance -= MINER_REWARD
+        minerWallet.balance += MINER_REWARD
+        await Promise.all([blockchainWallet.save(), minerWallet.save()])
+        return
     }
 })
 
