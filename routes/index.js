@@ -10,12 +10,11 @@ const Miner = require('../models/Miner')
 router.get('/blocks', show)
 
 router.get('/mine', async (req, res, next) => {   
-    // const block = new Block()
-    // await block.mine()
     const miner = await Miner.new()
-    const { block } = await miner.mine()
+    const { block, transaction } = await miner.mine()
     return res.json({
-        block
+        block,
+        transaction
     })
 })
 

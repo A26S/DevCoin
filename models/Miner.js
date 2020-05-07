@@ -12,20 +12,25 @@ const minerSchema = new Schema({
 minerSchema.method({
     mine: async function() {
         const { wallet } = this
-        // try {
+        try {
             const pool = await TransactionPool.findOrCreateOne()
+            // const [block, blockchain] = await Promise.all([
+            //     Block.mineOne(pool.transactions), 
+            //     Blockchain.findOrCreateOne(),
+                // pool.confirmTransactions()
+            // ]) 
+            const blockchain = await Blockchain.findOrCreateOne()
             const block = await Block.mineOne(pool.transactions)
             await pool.confirmTransactions()
-            const blockchain = await Blockchain.findOrCreateOne()
             const transaction = await blockchain.rewardMiner(wallet)
             return {
                 block,
                 transaction
             }
-        // } catch (err) {
-        //     const error = new CustomError('could not mine')
-        //     throw error
-        // }
+        } catch (err) {
+            const error = new CustomError('could not mine')
+            throw error
+        }
     }
 })
 
