@@ -1,5 +1,16 @@
-const Transaction = require('../models/Transaction')
-const Wallet = require('../models/Wallet')
+const Wallet = require('../../models/Wallet')
+const Transaction = require('../../models/Transaction')
+
+const createWallet = async (req, res, next) => {
+    try {
+        const wallet = await Wallet.new()
+        return res.json({
+            wallet
+        })
+    } catch (error) {
+        return next(error)
+    }
+}
 
 const createTransaction = async (req, res, next) => {
     try {
@@ -20,4 +31,5 @@ const createTransaction = async (req, res, next) => {
     }
 }
 
+exports.createWallet = createWallet
 exports.createTransaction = createTransaction

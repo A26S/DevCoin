@@ -1,11 +1,10 @@
 const router = require('express').Router()
-const { clearAll, show } = require('../controllers/blockchainController')
-const { createTransaction } = require('../controllers/transactionsController')
-const { createWallet } = require('../controllers/walletsController')
+const { clearAll, show } = require('../controllers/blockchain')
+const { createTransaction } = require('../controllers/cryptocurrency')
+const { createWallet } = require('../controllers/cryptocurrency')
 const Block = require('../models/Block') // ---- this was causing errors!!!
 const TransactionPool = require('../models/TransactionPool')
 const Miner = require('../models/Miner')
-
 
 router.get('/blocks', show)
 
@@ -25,6 +24,7 @@ router.get('/transactions', async (req, res, next) => {
         transactions
     })
 })
+
 router.post('/create', createWallet)
 
 router.post('/send', createTransaction)
