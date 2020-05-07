@@ -1,5 +1,7 @@
 const Wallet = require('../../models/Wallet')
 const Transaction = require('../../models/Transaction')
+const TransactionPool = require('../../models/TransactionPool')
+const Miner = require('../../models/Miner')
 
 const createWallet = async (req, res, next) => {
     try {
@@ -31,5 +33,32 @@ const createTransaction = async (req, res, next) => {
     }
 }
 
+const getTransactions = async (req, res, next) => {
+    try {
+        const pool = await TransactionPool.findOrCreateOne()
+        const { transactions } = pool
+        return res.json({
+            transactions
+        })
+    } catch (error) {
+        return next(error)
+    }
+}
+
+const mine = async (req, res, next) => {   
+    try {
+        const miner = await Miner.new()
+        const { block, transaction } = await miner.mine()
+        return res.json({
+            block,
+            transaction
+        })
+    } catch (error) {
+        return next(error)
+    }
+}
+
 exports.createWallet = createWallet
 exports.createTransaction = createTransaction
+exports.getTransactions = getTransactions
+exports.mine = mine

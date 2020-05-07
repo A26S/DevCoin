@@ -17,7 +17,7 @@ minerSchema.method({
             // const [block, blockchain] = await Promise.all([
             //     Block.mineOne(pool.transactions), 
             //     Blockchain.findOrCreateOne(),
-                // pool.confirmTransactions()
+            //     pool.confirmTransactions()
             // ]) 
             const blockchain = await Blockchain.findOrCreateOne()
             const block = await Block.mineOne(pool.transactions)

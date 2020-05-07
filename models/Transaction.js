@@ -1,7 +1,8 @@
 const { Schema, model } = require('mongoose')
 const TransactionPool = require('./TransactionPool')
-const CustomError = require('../utils/CustomError')
 const { computeHash, getKeyPair, verifySignature } = require('../utils/crypto')
+const CustomError = require('../utils/CustomError')
+
 const { MINING_REWARD } = process.env
 
 const transactionSchema = new Schema({
