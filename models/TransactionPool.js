@@ -16,9 +16,17 @@ transactionPoolSchema.method({
             throw error
         }
     },
+    confirmTransactions: async function() {
+        const Transaction = require('../models/Transaction') // the import was causing errors!!!
+        for await (const t of this.transactions) {
+            transaction = await Transaction.findOne(t)
+            transaction.status = 'Confirmed'
+            await transaction.save()
+        }
+        await this.clear()
+    },
     clear: async function() {
-        let { transactions } = this
-        transactions = []
+        this.transactions = []
         await this.save()
         return
     }

@@ -89,7 +89,7 @@ transactionSchema.static({
         transaction.outputs.push(output1, output2)
         await transaction.sign(blockchainWallet)
         blockchainWallet.balance -= MINING_REWARD
-        minerWallet.balance += MINING_REWARD
+        minerWallet.balance += parseInt(MINING_REWARD)
         await Promise.all([blockchainWallet.save(), minerWallet.save()])
         return
     }

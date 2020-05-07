@@ -3,6 +3,7 @@ const Blockchain = require('../models/Blockchain')
 const Wallet = require('../models/Wallet')
 const Transaction = require('../models/Transaction')
 const TransactionPool = require('../models/TransactionPool')
+const Miner = require('../models/Miner')
 const CustomError = require('../utils/CustomError')
 const { computeHash } = require('../utils/crypto')
 
@@ -58,7 +59,8 @@ const clearAll = async (req, res, next) => {
         const wallets = await Wallet.find()
         const transactions = await Transaction.find()
         const transactionPool = await TransactionPool.find()
-        const blockchain = [...blocks, ...chain, ...wallets, ...transactions, ...transactionPool]
+        const miners = await Miner.find()
+        const blockchain = [...blocks, ...chain, ...wallets, ...transactions, ...transactionPool, ...miners]
         for await (const element of blockchain) {
             element.deleteOne()
         }

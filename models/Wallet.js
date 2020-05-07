@@ -23,10 +23,15 @@ walletSchema.method({
 
 walletSchema.static({
     new: async function() {
-        const wallet = new this()
-        wallet.generateKeyPair()
-        await wallet.save()
-        return wallet
+        try {
+            const wallet = new this()
+            wallet.generateKeyPair()
+            await wallet.save()
+            return wallet
+        } catch (err) {
+            const error = new CustomError('could not create a wallet', 500)
+            throw error
+        }
     }
 })
 

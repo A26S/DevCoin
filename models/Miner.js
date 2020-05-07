@@ -3,26 +3,29 @@ const Wallet = require('../models/Wallet')
 const TransactionPool = require('../models/TransactionPool')
 const Blockchain = require('../models/Blockchain')
 const Block = require('../models/Block')
+const CustomError = require('../utils/CustomError')
 
 const minerSchema = new Schema({
-    // blockchain: { type: Schema.Types.ObjectId, ref: 'Blockchain' },
-    // transactionPool: { type: Schema.Types.ObjectId, ref: 'TransactionPool' },
     wallet: { type: Schema.Types.ObjectId, ref: 'Wallet' }
 })
 
 minerSchema.method({
     mine: async function() {
         const { wallet } = this
-        const pool = await TransactionPool.findOrCreateOne()
-        const { transactions } = pool
-        const block = await Block.mineOne(transactions)
-        const blockchain = await Blockchain.findOrCreateOne()
-        const transaction = await blockchain.rewardMiner(wallet)
-        await pool.clear()
-        return {
-            block,
-            transaction
-        }
+        // try {
+            const pool = await TransactionPool.findOrCreateOne()
+            const block = await Block.mineOne(pool.transactions)
+            await pool.confirmTransactions()
+            const blockchain = await Blockchain.findOrCreateOne()
+            const transaction = await blockchain.rewardMiner(wallet)
+            return {
+                block,
+                transaction
+            }
+        // } catch (err) {
+        //     const error = new CustomError('could not mine')
+        //     throw error
+        // }
     }
 })
 
