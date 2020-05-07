@@ -44,8 +44,9 @@ blockchainSchema.method({
         return
     },
     rewardMiner: async function(miner) {
-        const wallet = await Wallet.findById(this.wallet)
-        const transaction = await Transaction.minerReward(wallet, miner)
+        const [wallet, minerWallet] = await Promise.all([Wallet.findById(this.wallet), Wallet.findById(miner)])
+        const transaction = await Transaction.minerReward(wallet, minerWallet)
+        return transaction
     }
 })
 

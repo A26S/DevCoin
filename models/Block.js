@@ -3,7 +3,7 @@ const Blockchain = require('./Blockchain')
 const { adjustDifficulty, getHashAndDifficulty } = require('../controllers/blockController')
 const { computeHash } = require('../utils/crypto')
 
-let { DIFFICULTY } = process.env
+const { DIFFICULTY } = process.env
 
 const blockSchema = new Schema({
     timestamp: { type: String, default: Date.now },
@@ -16,23 +16,24 @@ const blockSchema = new Schema({
 })
 
 blockSchema.method({
-    mine: async function() {
+    mine: async function(transactions) {
         let { timestamp, hash, nonce } = this
         const blockchain = await Blockchain.findOrCreateOne()
         const latestBlock = blockchain.latestBlock()
         let { previousHash, difficulty } = await getHashAndDifficulty(latestBlock)
         while (hash.substring(0, difficulty) !== '0'.repeat(difficulty)) {
             nonce++
-            hash = computeHash(timestamp, previousHash, 'lol', nonce)
+            hash = computeHash(timestamp, previousHash, transactions, nonce)
         }
         difficulty = adjustDifficulty(difficulty, timestamp)
         this.previousHash = previousHash
         this.hash = hash
+        this.transactions = transactions
         this.nonce = nonce
         this.difficulty = difficulty
         const persistChangesToDB = [blockchain.addBlock(this), this.save()]
         await Promise.all(persistChangesToDB)
-        return
+        return this
         // if it doesnt work, make mine a static function and `return new this`
     }
 })
@@ -47,6 +48,11 @@ blockSchema.static({
             difficulty: DIFFICULTY
         })
         return genesisBlock
+    },
+    mineOne: async function(transactions) {
+        const block = new this()
+        await block.mine(transactions)
+        return block
     }
 })
 

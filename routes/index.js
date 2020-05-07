@@ -4,13 +4,16 @@ const { createTransaction } = require('../controllers/transactionsController')
 const { createWallet } = require('../controllers/walletsController')
 const Block = require('../models/Block') // ---- this was causing errors!!!
 const TransactionPool = require('../models/TransactionPool')
+const Miner = require('../models/Miner')
 
 
 router.get('/blocks', show)
 
 router.get('/mine', async (req, res, next) => {   
-    const block = new Block()
-    await block.mine()
+    // const block = new Block()
+    // await block.mine()
+    const miner = await Miner.new()
+    const { block } = await miner.mine()
     return res.json({
         block
     })

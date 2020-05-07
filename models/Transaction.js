@@ -2,7 +2,7 @@ const { Schema, model } = require('mongoose')
 const TransactionPool = require('./TransactionPool')
 const CustomError = require('../utils/CustomError')
 const { computeHash, getKeyPair, verifySignature } = require('../utils/crypto')
-const { MINER_REWARD } = process.env
+const { MINING_REWARD } = process.env
 
 const transactionSchema = new Schema({
     input: { type: Object, default: {} },
@@ -73,23 +73,23 @@ transactionSchema.static({
         return transaction
     },
     minerReward: async function(blockchainWallet, minerWallet) {
-        if (amount > blockchainWallet.balance) {
+        if (MINING_REWARD > blockchainWallet.balance) {
             const error = new CustomError('there is no more currency that will go into circulation', 401)
             throw error
         } 
         const transaction = new this()
         const output1 = {
-            newBalance: blockchainWallet.balance - MINER_REWARD,
+            newBalance: blockchainWallet.balance - MINING_REWARD,
             address: blockchainWallet.publicKey
         }
         const output2 = {
-            amount: MINER_REWARD,
+            amount: MINING_REWARD,
             address: minerWallet
         }
         transaction.outputs.push(output1, output2)
         await transaction.sign(blockchainWallet)
-        blockchainWallet.balance -= MINER_REWARD
-        minerWallet.balance += MINER_REWARD
+        blockchainWallet.balance -= MINING_REWARD
+        minerWallet.balance += MINING_REWARD
         await Promise.all([blockchainWallet.save(), minerWallet.save()])
         return
     }

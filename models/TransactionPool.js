@@ -15,17 +15,23 @@ transactionPoolSchema.method({
             const error = new CustomError('could not add the transaction to the pool')
             throw error
         }
+    },
+    clear: async function() {
+        let { transactions } = this
+        transactions = []
+        await this.save()
+        return
     }
 })
 
 transactionPoolSchema.static({
     findOrCreateOne: async function() {
         const existingPool = await this.findOne()
-        if (!existingPool) {
-            const pool = await this.create({})
-            return pool
+        if (existingPool) {
+            return existingPool
         }
-        return existingPool
+        const pool = await this.create({})
+        return pool
     }
 })
 
