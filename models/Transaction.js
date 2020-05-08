@@ -32,7 +32,7 @@ transactionSchema.method({
         const hash = computeHash(outputs)
         const verified = verifySignature(keyPair, signature, hash)
         if (verified) return verified
-        const error = new CustomError('invalid signature')
+        const error = new CustomError('invalid signature', 401)
         throw error
     },
     addToPool: async function(sender, recipient) {

@@ -29,7 +29,6 @@ connectToDB()
 
 const expressServer = app.listen(port, () => console.log(`port ${port} connected`))
 const io = socketio(expressServer)
-// const clientNode = client(`http://localhost:${port}`)
 
 exports.io = io
 exports.client = client

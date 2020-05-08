@@ -1,6 +1,9 @@
 const router = require('express').Router()
 const { clearAll, show } = require('../controllers/blockchain')
 const { createWallet, createTransaction, getTransactions, mine } = require('../controllers/cryptocurrency')
+const broadcastBlockchain = require('../middleware/broadcastBlockchain')
+
+router.get('/', broadcastBlockchain)
 
 router.get('/blocks', show)
 

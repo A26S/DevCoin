@@ -5,8 +5,10 @@ const errorHandler = require('./middleware/errorHandler')
 
 const app = express()
 app.use(express.json())
-const clientSide = express.static(`${__dirname}/client`)
-app.use(clientSide)
+
+// not using client side right now
+// const clientSide = express.static(`${__dirname}/client`)
+// app.use(clientSide)
 
 app.use(routes)
 

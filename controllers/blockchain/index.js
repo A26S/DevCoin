@@ -13,10 +13,6 @@ const show = async (req, res, next) => {
             const error = new CustomError('could not create blockchain', 500)
             throw error
         }
-        const { io, client } = require('../../server') // ---- this import was causing errors!!!
-        io.on('connect', socket => {
-            socket.emit('blockchain', blockchain)
-        })
         return res.status(200).json({
             blockchain
         })
