@@ -1,4 +1,5 @@
 const { client } = require('../server')
+const { BLOCKCHAIN, TRANSACTIONS, CLEAR_POOL } = require('./socketActions')
 
 const { PORT } = process.env
 
@@ -10,7 +11,7 @@ const getNode = req => {
 }
 
 const getChain = socket => {
-    socket.on('blockchain', blockchain => {
+    socket.on(BLOCKCHAIN, blockchain => {
         console.log({
             blockchain
         })
@@ -18,7 +19,7 @@ const getChain = socket => {
 }
 
 const getTransactionPool = socket => {
-    socket.on('transactions', transactions => {
+    socket.on(TRANSACTIONS, transactions => {
         console.log({
             transactions
         })
@@ -26,7 +27,7 @@ const getTransactionPool = socket => {
 }
 
 const clearTransactionPool = socket => {
-    socket.on('clear pool', emptyPool => {
+    socket.on(CLEAR_POOL, emptyPool => {
         console.log({
             transactions: emptyPool
         })

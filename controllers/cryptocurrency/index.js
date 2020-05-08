@@ -4,6 +4,7 @@ const TransactionPool = require('../../models/TransactionPool')
 const Miner = require('../../models/Miner')
 const { io } = require('../../server')
 const { getNode, getTransactionPool, clearTransactionPool } = require('../../utils/clientSocket')
+const { TRANSACTIONS, CLEAR_POOL } = require('../../utils/socketActions')
  
 const createWallet = async (req, res, next) => {
     try {
@@ -39,7 +40,7 @@ const getTransactions = async (req, res, next) => {
     try {
         const pool = await TransactionPool.findOrCreateOne()
         const { transactions } = pool
-        io.emit('transactions', transactions)
+        io.emit(TRANSACTIONS, transactions)
         const socketNode = getNode(req)
         getTransactionPool(socketNode)
         return res.json({
@@ -54,7 +55,7 @@ const mine = async (req, res, next) => {
     try {
         const miner = await Miner.new()
         const { block, transaction } = await miner.mine()
-        io.emit('clear pool', [])
+        io.emit(CLEAR_POOL, [])
         const socketNode = getNode(req)
         clearTransactionPool(socketNode)
         return res.json({
